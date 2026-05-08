@@ -1,4 +1,16 @@
 import { useEffect, useState } from 'react'
+
+import API from '../services/api'
+
+import { logout } from '../auth'
+
+import Filters from './Filters'
+import VideoResults from './VideoResults'
+
+export default function Dashboard() {
+
+  const [locations, setLocations] = useState([])
+
   const [cameras, setCameras] = useState([])
 
   const [videos, setVideos] = useState([])
@@ -18,7 +30,9 @@ import { useEffect, useState } from 'react'
       setLocations(response.data)
 
     } catch (err) {
+
       console.error(err)
+
     }
   }
 
@@ -33,7 +47,9 @@ import { useEffect, useState } from 'react'
       setCameras(response.data)
 
     } catch (err) {
+
       console.error(err)
+
     }
   }
 
@@ -49,7 +65,9 @@ import { useEffect, useState } from 'react'
       setVideos(response.data)
 
     } catch (err) {
+
       console.error(err)
+
     }
   }
 
