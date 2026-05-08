@@ -1,31 +1,68 @@
-import { useEffect, useState } from "react";
-import Login from "./components/Login";
-import Dashboard from "./components/Dashboard";
+import { useEffect, useState } from 'react'
+
+import Login from './components/Login'
+import Dashboard from './components/Dashboard'
+
+import { exchangeCodeForToken } from './auth/token'
 
 export default function App() {
-  const [authenticated, setAuthenticated] = useState(false);
+
+  const [loading, setLoading] = useState(true)
+
+  const [authenticated, setAuthenticated] = useState(false)
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
 
-    const code = params.get("code");
+    async function handleAuth() {
 
-    if (code) {
-      // TEMPORARY
-      // In production exchange code for tokens via backend
-      localStorage.setItem("loggedIn", "true");
+      try {
 
-      window.history.replaceState({}, document.title, "/");
+        const params = new URLSearchParams(window.location.search)
 
-      setAuthenticated(true);
-    } else {
-      const loggedIn = localStorage.getItem("loggedIn");
+        const code = params.get('code')
 
-      if (loggedIn) {
-        setAuthenticated(true);
+        if (code) {
+
+          const tokens = await exchangeCodeForToken(code)
+
+          localStorage.setItem('access_token', tokens.access_token)
+          localStorage.setItem('id_token', tokens.id_token)
+          localStorage.setItem('refresh_token', tokens.refresh_token)
+
+          window.history.replaceState({}, document.title, '/')
+
+          setAuthenticated(true)
+
+        } else {
+
+          const token = localStorage.getItem('id_token')
+
+          if (token) {
+            setAuthenticated(true)
+          }
+        }
+
+      } catch (err) {
+
+        console.error(err)
+
+        localStorage.clear()
+
+      } finally {
+
+        setLoading(false)
       }
     }
-  }, []);
 
-  return authenticated ? <Dashboard /> : <Login />;
+    handleAuth()
+
+  }, [])
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
+  return authenticated
+    ? <Dashboard />
+    : <Login />
 }
