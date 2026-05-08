@@ -1,4 +1,26 @@
 import { useState } from 'react'
+
+export default function Filters({
+  locations,
+  cameras,
+  onLocationChange,
+  onSearch
+}) {
+
+  const [location, setLocation] = useState('')
+  const [camera, setCamera] = useState('')
+
+  const [year, setYear] = useState('2026')
+  const [month, setMonth] = useState('05')
+  const [day, setDay] = useState('01')
+
+  const [startTime, setStartTime] = useState('00:00')
+  const [endTime, setEndTime] = useState('23:59')
+
+  const handleLocation = (value) => {
+
+    setLocation(value)
+
     onLocationChange(value)
   }
 
@@ -22,30 +44,51 @@ import { useState } from 'react'
 
     <div className="filters">
 
-      <select onChange={(e) => handleLocation(e.target.value)}>
-        <option value="">Select Location</option>
+      <select
+        value={location}
+        onChange={(e) => handleLocation(e.target.value)}
+      >
+        <option value="">
+          Select Location
+        </option>
 
         {locations.map((location) => (
-          <option key={location} value={location}>
+          <option
+            key={location}
+            value={location}
+          >
             {location}
           </option>
         ))}
+
       </select>
 
-      <select onChange={(e) => setCamera(e.target.value)}>
-        <option value="">Select Camera</option>
+      <select
+        value={camera}
+        onChange={(e) => setCamera(e.target.value)}
+      >
+
+        <option value="">
+          Select Camera
+        </option>
 
         {cameras.map((camera) => (
-          <option key={camera.id} value={camera.id}>
+          <option
+            key={camera.id}
+            value={camera.id}
+          >
             {camera.name}
           </option>
         ))}
+
       </select>
 
       <input
         type="date"
         onChange={(e) => {
-          const [y, m, d] = e.target.value.split('-')
+
+          const [y, m, d] =
+            e.target.value.split('-')
 
           setYear(y)
           setMonth(m)
@@ -56,13 +99,17 @@ import { useState } from 'react'
       <input
         type="time"
         value={startTime}
-        onChange={(e) => setStartTime(e.target.value)}
+        onChange={(e) =>
+          setStartTime(e.target.value)
+        }
       />
 
       <input
         type="time"
         value={endTime}
-        onChange={(e) => setEndTime(e.target.value)}
+        onChange={(e) =>
+          setEndTime(e.target.value)
+        }
       />
 
       <button onClick={handleSearch}>
