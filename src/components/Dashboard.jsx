@@ -21,75 +21,62 @@ export default function Dashboard() {
 
   }, [])
 
-  async function fetchLocations() {
+ async function fetchLocations() {
+  try {
 
-    try {
+    const response = await API.get('/locations')
 
-      const response = await API.get('/locations')
+    const data =
+      typeof response.data.body === 'string'
+        ? JSON.parse(response.data.body)
+        : response.data
 
-      console.log('LOCATIONS API:', response.data)
+    setLocations(data)
 
-      const data =
-        typeof response.data.body === 'string'
-          ? JSON.parse(response.data.body)
-          : response.data
-
-      setLocations(data)
-
-    } catch (err) {
-
-      console.error('fetchLocations error:', err)
-
-      setLocations([])
-
-    }
+  } catch (err) {
+    console.error(err)
+    setLocations([])
   }
+}
 
   async function fetchCameras(location) {
+  try {
 
-    try {
+    const response = await API.get(
+      `/cameras?location=${encodeURIComponent(location)}`
+    )
 
-      const response = await API.get(
-        `/cameras?location=${encodeURIComponent(location)}`
-      )
+    const data =
+      typeof response.data.body === 'string'
+        ? JSON.parse(response.data.body)
+        : response.data
 
-      console.log('CAMERAS API:', response.data)
+    setCameras(data)
 
-      const data =
-        typeof response.data.body === 'string'
-          ? JSON.parse(response.data.body)
-          : response.data
-
-      setCameras(data)
-
-    } catch (err) {
-
-      console.error('fetchCameras error:', err)
-
-      setCameras([])
-
-    }
+  } catch (err) {
+    console.error(err)
+    setCameras([])
   }
+}
+  
+async function searchVideos(payload) {
+  try {
 
-  async function searchVideos(payload) {
+    const response = await API.post('/videos/search', payload)
 
-    try {
+    const data =
+      typeof response.data.body === 'string'
+        ? JSON.parse(response.data.body)
+        : response.data
 
-      const response = await API.post(
-        '/videos/search',
-        payload
-      )
+    setVideos(data)
 
-      console.log('VIDEOS API:', response.data)
-
-      const data =
-        typeof response.data.body === 'string'
-          ? JSON.parse(response.data.body)
-          : response.data
-
-      setVideos(data)
-
-    } catch (err) {
+  } catch (err) {
+    console.error(err)
+    setVideos([])
+  }
+}
+  catch (err) {
 
       console.error('searchVideos error:', err)
 
