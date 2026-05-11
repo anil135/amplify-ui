@@ -27,11 +27,20 @@ export default function Dashboard() {
 
       const response = await API.get('/locations')
 
-      setLocations(response.data)
+      console.log('LOCATIONS API:', response.data)
+
+      const data =
+        typeof response.data.body === 'string'
+          ? JSON.parse(response.data.body)
+          : response.data
+
+      setLocations(data)
 
     } catch (err) {
 
-      console.error(err)
+      console.error('fetchLocations error:', err)
+
+      setLocations([])
 
     }
   }
@@ -44,11 +53,20 @@ export default function Dashboard() {
         `/cameras?location=${encodeURIComponent(location)}`
       )
 
-      setCameras(response.data)
+      console.log('CAMERAS API:', response.data)
+
+      const data =
+        typeof response.data.body === 'string'
+          ? JSON.parse(response.data.body)
+          : response.data
+
+      setCameras(data)
 
     } catch (err) {
 
-      console.error(err)
+      console.error('fetchCameras error:', err)
+
+      setCameras([])
 
     }
   }
@@ -62,11 +80,20 @@ export default function Dashboard() {
         payload
       )
 
-      setVideos(response.data)
+      console.log('VIDEOS API:', response.data)
+
+      const data =
+        typeof response.data.body === 'string'
+          ? JSON.parse(response.data.body)
+          : response.data
+
+      setVideos(data)
 
     } catch (err) {
 
-      console.error(err)
+      console.error('searchVideos error:', err)
+
+      setVideos([])
 
     }
   }
