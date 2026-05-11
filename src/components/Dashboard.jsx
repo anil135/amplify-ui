@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
 import API from '../services/api'
-
 import { logout } from '../auth'
 
 import Filters from './Filters'
@@ -10,85 +9,106 @@ import VideoResults from './VideoResults'
 export default function Dashboard() {
 
   const [locations, setLocations] = useState([])
-
   const [cameras, setCameras] = useState([])
-
   const [videos, setVideos] = useState([])
 
+  // ---------------------------
+  // LOAD LOCATIONS ON MOUNT
+  // ---------------------------
   useEffect(() => {
-
     fetchLocations()
-
   }, [])
 
- async function fetchLocations() {
-  try {
+  // ---------------------------
+  // GET LOCATIONS
+  // ---------------------------
+  async function fetchLocations() {
 
-    const response = await API.get('/locations')
+    try {
 
-    const data =
-      typeof response.data.body === 'string'
-        ? JSON.parse(response.data.body)
-        : response.data
+      const response = await API.get('/locations')
 
-    setLocations(data)
+      console.log('Locations raw response:', response.data)
 
-  } catch (err) {
-    console.error(err)
-    setLocations([])
+      const data =
+        typeof response.data.body === 'string'
+          ? JSON.parse(response.data.body)
+          : response.data
+
+      setLocations(Array.isArray(data) ? data : [])
+
+    } catch (err) {
+
+      console.error('fetchLocations error:', err)
+      setLocations([])
+
+    }
   }
-}
 
+  // ---------------------------
+  // GET CAMERAS BY LOCATION
+  // ---------------------------
   async function fetchCameras(location) {
-  try {
 
-    const response = await API.get(
-      `/cameras?location=${encodeURIComponent(location)}`
-    )
+    if (!location) return
 
-    const data =
-      typeof response.data.body === 'string'
-        ? JSON.parse(response.data.body)
-        : response.data
+    try {
 
-    setCameras(data)
+      const response = await API.get(
+        `/cameras?location=${encodeURIComponent(location)}`
+      )
 
-  } catch (err) {
-    console.error(err)
-    setCameras([])
+      console.log('Cameras raw response:', response.data)
+
+      const data =
+        typeof response.data.body === 'string'
+          ? JSON.parse(response.data.body)
+          : response.data
+
+      setCameras(Array.isArray(data) ? data : [])
+
+    } catch (err) {
+
+      console.error('fetchCameras error:', err)
+      setCameras([])
+
+    }
   }
-}
-  
-async function searchVideos(payload) {
-  try {
 
-    const response = await API.post('/videos/search', payload)
+  // ---------------------------
+  // SEARCH VIDEOS
+  // ---------------------------
+  async function searchVideos(payload) {
 
-    const data =
-      typeof response.data.body === 'string'
-        ? JSON.parse(response.data.body)
-        : response.data
+    try {
 
-    setVideos(data)
+      const response = await API.post('/videos/search', payload)
 
-  } catch (err) {
-    console.error(err)
-    setVideos([])
-  }
-}
-  catch (err) {
+      console.log('Videos raw response:', response.data)
+
+      const data =
+        typeof response.data.body === 'string'
+          ? JSON.parse(response.data.body)
+          : response.data
+
+      setVideos(Array.isArray(data) ? data : [])
+
+    } catch (err) {
 
       console.error('searchVideos error:', err)
-
       setVideos([])
 
     }
   }
 
+  // ---------------------------
+  // UI
+  // ---------------------------
   return (
 
     <div className="dashboard">
 
+      {/* TOP BAR */}
       <div className="topbar">
 
         <h1>Alta Video Retrieval</h1>
@@ -99,6 +119,7 @@ async function searchVideos(payload) {
 
       </div>
 
+      {/* FILTERS */}
       <Filters
         locations={locations}
         cameras={cameras}
@@ -106,6 +127,7 @@ async function searchVideos(payload) {
         onSearch={searchVideos}
       />
 
+      {/* RESULTS */}
       <VideoResults videos={videos} />
 
     </div>
