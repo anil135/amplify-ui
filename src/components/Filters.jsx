@@ -12,11 +12,14 @@ export default function Filters({
 
   const [year, setYear] = useState('2026')
   const [month, setMonth] = useState('05')
-  const [day, setDay] = useState('01')
+  const [day, setDay] = useState('08')
 
-  const [startTime, setStartTime] = useState('00:00')
-  const [endTime, setEndTime] = useState('23:59')
+  const [startTime, setStartTime] = useState('13:00')
+  const [endTime, setEndTime] = useState('14:00')
 
+  // -----------------------------
+  // LOCATION CHANGE
+  // -----------------------------
   const handleLocation = (value) => {
 
     console.log('Selected location:', value)
@@ -30,7 +33,16 @@ export default function Filters({
     onLocationChange(value)
   }
 
+  // -----------------------------
+  // SEARCH
+  // -----------------------------
   const handleSearch = () => {
+
+    if (!location || !camera) {
+
+      alert('Please select location and camera')
+      return
+    }
 
     const start =
       `${year}-${month}-${day}T${startTime}:00Z`
@@ -38,12 +50,16 @@ export default function Filters({
     const end =
       `${year}-${month}-${day}T${endTime}:59Z`
 
-    onSearch({
+    const payload = {
       location,
       camera_id: camera,
       start_time: start,
       end_time: end
-    })
+    }
+
+    console.log('SEARCH PAYLOAD:', payload)
+
+    onSearch(payload)
   }
 
   return (
@@ -85,12 +101,14 @@ export default function Filters({
         </option>
 
         {(cameras || []).map((cam) => (
+
           <option
             key={cam.id}
             value={cam.id}
           >
             {cam.name}
           </option>
+
         ))}
 
       </select>
@@ -99,6 +117,7 @@ export default function Filters({
 
       <input
         type="date"
+        value={`${year}-${month}-${day}`}
         onChange={(e) => {
 
           if (!e.target.value) return
