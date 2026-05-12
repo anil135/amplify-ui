@@ -12,106 +12,153 @@ export default function Dashboard() {
   const [cameras, setCameras] = useState([])
   const [videos, setVideos] = useState([])
 
-  // ---------------------------
-  // LOAD LOCATIONS ON MOUNT
-  // ---------------------------
+  // -----------------------------
+  // LOAD LOCATIONS
+  // -----------------------------
   useEffect(() => {
     fetchLocations()
   }, [])
 
-  // ---------------------------
-  // GET LOCATIONS
-  // ---------------------------
+  // -----------------------------
+  // FETCH LOCATIONS
+  // -----------------------------
   async function fetchLocations() {
 
     try {
 
-      const response = await API.get('/locations')
+      const response =
+        await API.get('/locations')
 
-      console.log('Locations raw response:', response.data)
+      console.log(
+        'Locations raw response:',
+        response.data
+      )
 
       const data =
         typeof response.data.body === 'string'
           ? JSON.parse(response.data.body)
           : response.data
 
-      setLocations(Array.isArray(data) ? data : [])
+      console.log('Parsed locations:', data)
+
+      setLocations(
+        Array.isArray(data) ? data : []
+      )
 
     } catch (err) {
 
-      console.error('fetchLocations error:', err)
-      setLocations([])
+      console.error(
+        'fetchLocations error:',
+        err
+      )
 
+      setLocations([])
     }
   }
 
-  // ---------------------------
-  // GET CAMERAS BY LOCATION
-  // ---------------------------
+  // -----------------------------
+  // FETCH CAMERAS
+  // -----------------------------
   async function fetchCameras(location) {
 
     if (!location) return
 
     try {
 
-      const response = await API.get(
-        `/cameras?location=${encodeURIComponent(location)}`
-      )
+      const response =
+        await API.get(
+          `/cameras?location=${encodeURIComponent(location)}`
+        )
 
-      console.log('Cameras raw response:', response.data)
+      console.log(
+        'Cameras raw response:',
+        response.data
+      )
 
       const data =
         typeof response.data.body === 'string'
           ? JSON.parse(response.data.body)
           : response.data
 
-      setCameras(Array.isArray(data) ? data : [])
+      console.log('Parsed cameras:', data)
+
+      setCameras(
+        Array.isArray(data) ? data : []
+      )
 
     } catch (err) {
 
-      console.error('fetchCameras error:', err)
-      setCameras([])
+      console.error(
+        'fetchCameras error:',
+        err
+      )
 
+      setCameras([])
     }
   }
 
-  // ---------------------------
+  // -----------------------------
   // SEARCH VIDEOS
-  // ---------------------------
+  // -----------------------------
   async function searchVideos(payload) {
 
     try {
 
-      const response = await API.post('/videos/search', payload)
+      console.log(
+        'SEARCH PAYLOAD:',
+        payload
+      )
 
-      console.log('Videos raw response:', response.data)
+      const response =
+        await API.post(
+          '/videos/search',
+          payload
+        )
+
+      console.log(
+        'Videos raw response:',
+        response.data
+      )
 
       const data =
         typeof response.data.body === 'string'
           ? JSON.parse(response.data.body)
           : response.data
 
-      setVideos(Array.isArray(data) ? data : [])
+      console.log(
+        'Parsed videos:',
+        data
+      )
+
+      setVideos(
+        Array.isArray(data) ? data : []
+      )
 
     } catch (err) {
 
-      console.error('searchVideos error:', err)
-      setVideos([])
+      console.error(
+        'searchVideos error:',
+        err
+      )
 
+      setVideos([])
     }
   }
 
-  // ---------------------------
+  // -----------------------------
   // UI
-  // ---------------------------
+  // -----------------------------
   return (
 
     <div className="dashboard">
 
       {/* TOP BAR */}
+
       <div className="topbar">
 
-        <h1>Alta Video Retrieval</h1>
+        <h1>
+          Alta Video Retrieval
+        </h1>
 
         <button onClick={logout}>
           Logout
@@ -120,6 +167,7 @@ export default function Dashboard() {
       </div>
 
       {/* FILTERS */}
+
       <Filters
         locations={locations}
         cameras={cameras}
@@ -128,7 +176,10 @@ export default function Dashboard() {
       />
 
       {/* RESULTS */}
-      <VideoResults videos={videos} />
+
+      <VideoResults
+        videos={videos}
+      />
 
     </div>
   )
