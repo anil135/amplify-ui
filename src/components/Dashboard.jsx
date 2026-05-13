@@ -102,48 +102,59 @@ export default function Dashboard() {
   // -----------------------------
   async function searchVideos(payload) {
 
-    try {
+  try {
 
-      console.log(
-        'SEARCH PAYLOAD:',
+    console.log(
+      'SEARCH PAYLOAD:',
+      payload
+    )
+
+    const response =
+      await API.post(
+        '/videos/search',
         payload
       )
 
-      const response =
-        await API.post(
-          '/videos/search',
-          payload
-        )
+    console.log(
+      'FULL API RESPONSE:',
+      response.data
+    )
 
-      console.log(
-        'Videos raw response:',
-        response.data
-      )
+    let data = []
 
-      const data =
+    if (response.data.body) {
+
+      data =
         typeof response.data.body === 'string'
           ? JSON.parse(response.data.body)
-          : response.data
+          : response.data.body
 
-      console.log(
-        'Parsed videos:',
-        data
-      )
+    } else {
 
-      setVideos(
-        Array.isArray(data) ? data : []
-      )
-
-    } catch (err) {
-
-      console.error(
-        'searchVideos error:',
-        err
-      )
-
-      setVideos([])
+      data = response.data
     }
+
+    console.log(
+      'FINAL VIDEOS:',
+      data
+    )
+
+    setVideos(
+      Array.isArray(data)
+        ? data
+        : []
+    )
+
+  } catch (err) {
+
+    console.error(
+      'searchVideos error:',
+      err
+    )
+
+    setVideos([])
   }
+}
 
   // -----------------------------
   // UI
