@@ -39,8 +39,15 @@ export default function Dashboard() {
           ? JSON.parse(response.data.body)
           : response.data
 
+      console.log(
+        'Parsed locations:',
+        data
+      )
+
       setLocations(
-        Array.isArray(data) ? data : []
+        Array.isArray(data)
+          ? data
+          : []
       )
 
     } catch (err) {
@@ -68,13 +75,25 @@ export default function Dashboard() {
           `/cameras?location=${encodeURIComponent(location)}`
         )
 
+      console.log(
+        'Cameras raw response:',
+        response.data
+      )
+
       const data =
         typeof response.data.body === 'string'
           ? JSON.parse(response.data.body)
           : response.data
 
+      console.log(
+        'Parsed cameras:',
+        data
+      )
+
       setCameras(
-        Array.isArray(data) ? data : []
+        Array.isArray(data)
+          ? data
+          : []
       )
 
     } catch (err) {
@@ -193,8 +212,15 @@ export default function Dashboard() {
             : response.data.body
       }
 
+      // -----------------------------
+      // COPY LINK TO CLIPBOARD
+      // -----------------------------
+      await navigator.clipboard.writeText(
+        data.share_url
+      )
+
       alert(
-        `Share Link:\n${data.share_url}`
+        `Share link copied to clipboard:\n\n${data.share_url}`
       )
 
     } catch (err) {
@@ -240,7 +266,7 @@ export default function Dashboard() {
         onSearch={searchVideos}
       />
 
-      {/* RESULTS */}
+      {/* VIDEO RESULTS */}
 
       <VideoResults
         videos={videos}
