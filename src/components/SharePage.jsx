@@ -28,7 +28,7 @@ export default function SharePage() {
       })
 
       const response =
-        await API.post('/share/verify', {
+        await API.post('/videos/share/verify', {
           token,
           password
         })
