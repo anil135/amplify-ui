@@ -1,6 +1,8 @@
 export default function VideoResults({
+
   videos,
   onShare
+
 }) {
 
   return (
@@ -18,7 +20,10 @@ export default function VideoResults({
             {video.timestamp}
           </h3>
 
-          <video controls width="100%">
+          <video
+            controls
+            width="100%"
+          >
 
             <source
               src={video.video_url}
