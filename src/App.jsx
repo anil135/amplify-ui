@@ -83,35 +83,35 @@ export default function App() {
     return <div>Loading...</div>
   }
 
-  return (
-    <BrowserRouter>
+ return (
+  <BrowserRouter>
 
-      <Routes>
+    <Routes>
 
-        {/* LOGIN */}
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+      {/* PUBLIC ROUTES */}
 
-        {/* DASHBOARD */}
-        <Route
-          path="/"
-          element={
-            authenticated
-              ? <Dashboard />
-              : <Login />
-          }
-        />
+      <Route
+        path="/login"
+        element={<Login />}
+      />
 
-        {/* SHARE PAGE (IMPORTANT) */}
-        <Route
-          path="/share/:token"
-          element={<SharePage />}
-        />
+      <Route
+        path="/share/:token"
+        element={<SharePage />}
+      />
 
-      </Routes>
+      {/* PROTECTED ROUTES */}
 
-    </BrowserRouter>
-  )
-}
+      <Route
+        path="/"
+        element={
+          authenticated
+            ? <Dashboard />
+            : <Login />
+        }
+      />
+
+    </Routes>
+
+  </BrowserRouter>
+)
