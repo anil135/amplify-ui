@@ -39,8 +39,6 @@ export default function Dashboard() {
           ? JSON.parse(response.data.body)
           : response.data
 
-      console.log('Parsed locations:', data)
-
       setLocations(
         Array.isArray(data) ? data : []
       )
@@ -70,17 +68,10 @@ export default function Dashboard() {
           `/cameras?location=${encodeURIComponent(location)}`
         )
 
-      console.log(
-        'Cameras raw response:',
-        response.data
-      )
-
       const data =
         typeof response.data.body === 'string'
           ? JSON.parse(response.data.body)
           : response.data
-
-      console.log('Parsed cameras:', data)
 
       setCameras(
         Array.isArray(data) ? data : []
@@ -102,59 +93,122 @@ export default function Dashboard() {
   // -----------------------------
   async function searchVideos(payload) {
 
-  try {
+    try {
 
-    console.log(
-      'SEARCH PAYLOAD:',
-      payload
-    )
-
-    const response =
-      await API.post(
-        '/videos/search',
+      console.log(
+        'SEARCH PAYLOAD:',
         payload
       )
 
-    console.log(
-      'FULL API RESPONSE:',
-      response.data
-    )
+      const response =
+        await API.post(
+          '/videos/search',
+          payload
+        )
 
-    let data = []
+      console.log(
+        'FULL API RESPONSE:',
+        response.data
+      )
 
-    if (response.data.body) {
+      let data = []
 
-      data =
-        typeof response.data.body === 'string'
-          ? JSON.parse(response.data.body)
-          : response.data.body
+      if (response.data.body) {
 
-    } else {
+        data =
+          typeof response.data.body === 'string'
+            ? JSON.parse(response.data.body)
+            : response.data.body
 
-      data = response.data
+      } else {
+
+        data = response.data
+      }
+
+      console.log(
+        'FINAL VIDEOS:',
+        data
+      )
+
+      setVideos(
+        Array.isArray(data)
+          ? data
+          : []
+      )
+
+    } catch (err) {
+
+      console.error(
+        'searchVideos error:',
+        err
+      )
+
+      setVideos([])
     }
-
-    console.log(
-      'FINAL VIDEOS:',
-      data
-    )
-
-    setVideos(
-      Array.isArray(data)
-        ? data
-        : []
-    )
-
-  } catch (err) {
-
-    console.error(
-      'searchVideos error:',
-      err
-    )
-
-    setVideos([])
   }
-}
+
+  // -----------------------------
+  // SHARE VIDEO
+  // -----------------------------
+  async function handleShare(video) {
+
+    try {
+
+      console.log(
+        '🔥 SHARE CLICKED:',
+        video
+      )
+
+      const password =
+        prompt(
+          'Enter password for shared video'
+        )
+
+      if (!password) return
+
+      const response =
+        await API.post(
+
+          '/videos/share',
+
+          {
+            s3_key: video.s3_key,
+            password,
+            expires_in_hours: 24
+          }
+        )
+
+      console.log(
+        'SHARE RESPONSE:',
+        response.data
+      )
+
+      let data = response.data
+
+      if (response.data.body) {
+
+        data =
+          typeof response.data.body === 'string'
+            ? JSON.parse(response.data.body)
+            : response.data.body
+      }
+
+      alert(
+        `Share Link:\n${data.share_url}`
+      )
+
+    } catch (err) {
+
+      console.error(
+        'handleShare error:',
+        err
+      )
+
+      alert(
+        'Failed to create share link'
+      )
+    }
+  }
 
   // -----------------------------
   // UI
@@ -190,6 +244,7 @@ export default function Dashboard() {
 
       <VideoResults
         videos={videos}
+        onShare={handleShare}
       />
 
     </div>
