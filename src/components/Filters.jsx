@@ -10,26 +10,26 @@ export default function Filters({
   const [location, setLocation] = useState('')
   const [camera, setCamera] = useState('')
 
-  const [year, setYear] = useState('2026')
-  const [month, setMonth] = useState('05')
-  const [day, setDay] = useState('08')
+  const [startDate, setStartDate] =
+    useState('2026-05-01')
 
-  const [startTime, setStartTime] = useState('13:00')
-  const [endTime, setEndTime] = useState('14:00')
+  const [endDate, setEndDate] =
+    useState('2026-06-01')
+
+  const [startTime, setStartTime] =
+    useState('00:00')
+
+  const [endTime, setEndTime] =
+    useState('23:59')
 
   // -----------------------------
-  // LOCATION CHANGE
+  // LOCATION
   // -----------------------------
   const handleLocation = (value) => {
 
-    console.log('Selected location:', value)
-
     setLocation(value)
-
-    // reset selected camera
     setCamera('')
 
-    // fetch cameras for selected location
     onLocationChange(value)
   }
 
@@ -44,20 +44,20 @@ export default function Filters({
       return
     }
 
-    const start =
-      `${year}-${month}-${day}T${startTime}:00Z`
-
-    const end =
-      `${year}-${month}-${day}T${endTime}:59Z`
-
     const payload = {
+
       location,
+
       camera_id: camera,
-      start_time: start,
-      end_time: end
+
+      start_time:
+        `${startDate}T${startTime}:00Z`,
+
+      end_time:
+        `${endDate}T${endTime}:59Z`
     }
 
-    console.log('SEARCH PAYLOAD:', payload)
+    console.log(payload)
 
     onSearch(payload)
   }
@@ -66,33 +66,39 @@ export default function Filters({
 
     <div className="filters">
 
-      {/* LOCATION DROPDOWN */}
+      {/* LOCATION */}
 
       <select
         value={location}
-        onChange={(e) => handleLocation(e.target.value)}
+        onChange={(e) =>
+          handleLocation(e.target.value)
+        }
       >
 
         <option value="">
           Select Location
         </option>
 
-        {(locations || []).map((loc) => (
+        {locations.map((loc) => (
+
           <option
             key={loc}
             value={loc}
           >
             {loc}
           </option>
+
         ))}
 
       </select>
 
-      {/* CAMERA DROPDOWN */}
+      {/* CAMERA */}
 
       <select
         value={camera}
-        onChange={(e) => setCamera(e.target.value)}
+        onChange={(e) =>
+          setCamera(e.target.value)
+        }
         disabled={!location}
       >
 
@@ -100,7 +106,7 @@ export default function Filters({
           Select Camera
         </option>
 
-        {(cameras || []).map((cam) => (
+        {cameras.map((cam) => (
 
           <option
             key={cam.id}
@@ -113,22 +119,24 @@ export default function Filters({
 
       </select>
 
-      {/* DATE */}
+      {/* START DATE */}
 
       <input
         type="date"
-        value={`${year}-${month}-${day}`}
-        onChange={(e) => {
+        value={startDate}
+        onChange={(e) =>
+          setStartDate(e.target.value)
+        }
+      />
 
-          if (!e.target.value) return
+      {/* END DATE */}
 
-          const [y, m, d] =
-            e.target.value.split('-')
-
-          setYear(y)
-          setMonth(m)
-          setDay(d)
-        }}
+      <input
+        type="date"
+        value={endDate}
+        onChange={(e) =>
+          setEndDate(e.target.value)
+        }
       />
 
       {/* START TIME */}
@@ -150,8 +158,6 @@ export default function Filters({
           setEndTime(e.target.value)
         }
       />
-
-      {/* SEARCH BUTTON */}
 
       <button onClick={handleSearch}>
         Search Videos
